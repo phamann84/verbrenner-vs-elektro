@@ -122,6 +122,10 @@ tco-web
 ```
 Dann im Browser oeffnen: [http://127.0.0.1:8080](http://127.0.0.1:8080)
 
+## Statische GitHub Pages UI
+- Datei: `docs/index.html`
+- Oeffentliche URL (nach Aktivierung): [https://phamann84.github.io/verbrenner-vs-elektro/](https://phamann84.github.io/verbrenner-vs-elektro/)
+
 Optional (expliziter Host/Port):
 ```bash
 HOST=127.0.0.1 PORT=8080 tco-web

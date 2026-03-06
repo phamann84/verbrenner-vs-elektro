@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Elektro vs Verbrenner Gesamtkosten</title>
+  <style>
+    :root {
+      --bg: #f4f2ec;
+      --card: #ffffff;
+      --ink: #21252b;
+      --muted: #5d6470;
+      --accent: #0a7f5a;
+      --border: #d8d2c6;
+      --error-bg: #fff2f2;
+      --error-border: #f0b9b9;
+      --error-ink: #8f1d1d;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 12%, #ebe4d7 0%, transparent 30%),
+        radial-gradient(circle at 86% 82%, #dcebe2 0%, transparent 28%),
+        var(--bg);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 0 16px 24px;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 40px;
+      letter-spacing: 0.02em;
+      font-family: "Bebas Neue", "Arial Narrow", sans-serif;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    .sub {
+      color: var(--muted);
+      margin: 0 0 14px;
+      font-size: 13px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 14px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(90deg, var(--accent), #14a674);
+      color: white;
+      padding: 11px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .error {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--error-border);
+      background: var(--error-bg);
+      color: var(--error-ink);
+      font-size: 14px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+    }
+
+    .kpi {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      background: #fff;
+    }
+
+    .kpi .k {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .kpi .v {
+      font-weight: 700;
+      font-size: 18px;
+      margin-top: 4px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      text-align: right;
+      border-bottom: 1px solid #ece7dc;
+      padding: 6px;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 700px) {
+      h1 { font-size: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Elektro vs Verbrenner Gesamtkosten</h1>
+
+    <div class="card">
+      <p class="sub">Statische GitHub-Pages-Version: Berechnung laeuft direkt im Browser.</p>
+      <form id="calc-form">
+        <div class="grid">
+          <div>
+            <label for="years">Jahre</label>
+            <input id="years" type="number" step="1" min="1" max="30">
+          </div>
+          <div>
+            <label for="annual_km">km/Jahr</label>
+            <input id="annual_km" type="number" step="100" min="0">
+          </div>
+          <div>
+            <label for="acquisition_mode">Kaufen/Leasen</label>
+            <select id="acquisition_mode">
+              <option value="buy">Kaufen</option>
+              <option value="lease">Leasen</option>
+            </select>
+          </div>
+          <div>
+            <label for="manual_home_price">Manueller Strompreis (EUR/kWh)</label>
+            <input id="manual_home_price" type="number" step="0.001" min="0">
+          </div>
+          <div>
+            <label for="manual_fuel_price">Spritpreis manuell (EUR/l)</label>
+            <input id="manual_fuel_price" type="number" step="0.001" min="0">
+          </div>
+        </div>
+
+        <h2 style="margin-top:16px;">Elektro</h2>
+        <div class="grid">
+          <div class="buy-only">
+            <label for="ev_purchase_price">Elektro Kaufpreis</label>
+            <input id="ev_purchase_price" type="number" step="100" min="0">
+          </div>
+          <div class="lease-only">
+            <label for="ev_lease_monthly_rate">Elektro Leasingrate/Monat (EUR)</label>
+            <input id="ev_lease_monthly_rate" type="number" step="1" min="0">
+          </div>
+          <div class="lease-only">
+            <label for="ev_lease_down_payment">Elektro Sonderzahlung (EUR)</label>
+            <input id="ev_lease_down_payment" type="number" step="100" min="0">
+          </div>
+          <div>
+            <label for="ev_consumption_kwh">Verbrauch (kWh/100km)</label>
+            <input id="ev_consumption_kwh" type="number" step="0.1" min="0">
+          </div>
+          <div>
+            <label for="ev_maintenance_year">Wartung/Jahr</label>
+            <input id="ev_maintenance_year" type="number" step="10" min="0">
+          </div>
+          <div>
+            <label for="ev_insurance_year">Versicherung/Jahr</label>
+            <input id="ev_insurance_year" type="number" step="10" min="0">
+          </div>
+          <div>
+            <label for="ev_tax_year">Steuer/Jahr</label>
+            <input id="ev_tax_year" type="number" step="10" min="0">
+          </div>
+          <div class="buy-only">
+            <label for="ev_residual_percent">Restwert (%)</label>
+            <input id="ev_residual_percent" type="number" step="1" min="0" max="100">
+          </div>
+        </div>
+
+        <h2 style="margin-top:16px;">Verbrenner</h2>
+        <div class="grid">
+          <div class="buy-only">
+            <label for="ice_purchase_price">Verbrenner Kaufpreis</label>
+            <input id="ice_purchase_price" type="number" step="100" min="0">
+          </div>
+          <div class="lease-only">
+            <label for="ice_lease_monthly_rate">Verbrenner Leasingrate/Monat (EUR)</label>
+            <input id="ice_lease_monthly_rate" type="number" step="1" min="0">
+          </div>
+          <div class="lease-only">
+            <label for="ice_lease_down_payment">Verbrenner Sonderzahlung (EUR)</label>
+            <input id="ice_lease_down_payment" type="number" step="100" min="0">
+          </div>
+          <div>
+            <label for="ice_consumption_l">Verbrauch (l/100km)</label>
+            <input id="ice_consumption_l" type="number" step="0.1" min="0">
+          </div>
+          <div>
+            <label for="ice_maintenance_year">Wartung/Jahr</label>
+            <input id="ice_maintenance_year" type="number" step="10" min="0">
+          </div>
+          <div>
+            <label for="ice_insurance_year">Versicherung/Jahr</label>
+            <input id="ice_insurance_year" type="number" step="10" min="0">
+          </div>
+          <div>
+            <label for="ice_tax_year">Steuer/Jahr</label>
+            <input id="ice_tax_year" type="number" step="10" min="0">
+          </div>
+          <div class="buy-only">
+            <label for="ice_residual_percent">Restwert (%)</label>
+            <input id="ice_residual_percent" type="number" step="1" min="0" max="100">
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <button type="submit">Berechnen</button>
+        </div>
+        <div id="error" class="error"></div>
+      </form>
+    </div>
+
+    <div id="results" class="hidden">
+      <div class="card">
+        <h2>Zusammenfassung</h2>
+        <div class="summary">
+          <div class="kpi"><div class="k">Gesamtkosten Elektro</div><div class="v" id="kpi-ev-total"></div></div>
+          <div class="kpi"><div class="k">Gesamtkosten Verbrenner</div><div class="v" id="kpi-ice-total"></div></div>
+          <div class="kpi"><div class="k">Kosten/km Elektro</div><div class="v" id="kpi-ev-km"></div></div>
+          <div class="kpi"><div class="k">Kosten/km Verbrenner</div><div class="v" id="kpi-ice-km"></div></div>
+        </div>
+        <p id="recommendation" style="margin-top:10px;"></p>
+      </div>
+
+      <div class="card">
+        <h2>Top 3 Kostentreiber (Delta Elektro minus Verbrenner)</h2>
+        <ul id="drivers"></ul>
+      </div>
+
+      <div class="card">
+        <h2>Sensitivitaet</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Szenario</th>
+              <th>Elektro</th>
+              <th>Verbrenner</th>
+              <th>Delta (Elektro-Verbrenner)</th>
+            </tr>
+          </thead>
+          <tbody id="sensitivity-body"></tbody>
+        </table>
+        <p class="hint">Szenarien: Strom +/-20%, Sprit +/-20%, km/Jahr +/-20%</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULTS = {
+      years: 3,
+      annual_km: 10000,
+      acquisition_mode: "lease",
+      manual_home_price: 0.70,
+      manual_fuel_price: 1.82,
+
+      ev_purchase_price: 45000,
+      ev_lease_monthly_rate: 700,
+      ev_lease_down_payment: 0,
+      ev_consumption_kwh: 18,
+      ev_maintenance_year: 350,
+      ev_insurance_year: 1100,
+      ev_tax_year: 0,
+      ev_residual_percent: 45,
+
+      ice_purchase_price: 35000,
+      ice_lease_monthly_rate: 700,
+      ice_lease_down_payment: 0,
+      ice_consumption_l: 9.0,
+      ice_maintenance_year: 650,
+      ice_insurance_year: 1100,
+      ice_tax_year: 420,
+      ice_residual_percent: 40
+    };
+
+    const EV_HOME_SHARE = 0.7;
+    const EV_PUBLIC_SHARE = 0.2;
+    const EV_HPC_SHARE = 0.1;
+    const EV_HOME_LOSS_PERCENT = 10.0;
+    const EV_PUBLIC_PRICE = 0.59;
+    const EV_HPC_PRICE = 0.79;
+
+    function formatNumber(value, decimals = 0) {
+      return new Intl.NumberFormat("de-DE", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      }).format(value);
+    }
+
+    function formatEur(value, decimals = 0) {
+      return `${formatNumber(value, decimals)} EUR`;
+    }
+
+    function parseNumber(id, label, min = 0, max = Number.POSITIVE_INFINITY) {
+      const raw = document.getElementById(id).value;
+      const value = Number(raw);
+      if (!Number.isFinite(value)) {
+        throw new Error(`${label} muss eine Zahl sein.`);
+      }
+      if (value < min) {
+        throw new Error(`${label} muss >= ${min} sein.`);
+      }
+      if (value > max) {
+        throw new Error(`${label} muss <= ${max} sein.`);
+      }
+      return value;
+    }
+
+    function toggleAcquisitionFields() {
+      const mode = document.getElementById("acquisition_mode").value;
+      const isLease = mode === "lease";
+
+      for (const el of document.querySelectorAll(".lease-only")) {
+        el.style.display = isLease ? "" : "none";
+      }
+      for (const el of document.querySelectorAll(".buy-only")) {
+        el.style.display = isLease ? "none" : "";
+      }
+    }
+
+    function setDefaults() {
+      for (const [key, value] of Object.entries(DEFAULTS)) {
+        const node = document.getElementById(key);
+        if (node) {
+          node.value = value;
+        }
+      }
+      toggleAcquisitionFields();
+    }
+
+    function computeEvAnnualEnergy(annualKm, consumptionKwh, homePrice, evEnergyMultiplier, kmMultiplier) {
+      const effectiveKm = annualKm * kmMultiplier;
+      const kwh = effectiveKm * (consumptionKwh / 100);
+      const kwhEffective = kwh * (1 + EV_HOME_LOSS_PERCENT / 100);
+      const weightedPrice =
+        EV_HOME_SHARE * (homePrice * evEnergyMultiplier) +
+        EV_PUBLIC_SHARE * (EV_PUBLIC_PRICE * evEnergyMultiplier) +
+        EV_HPC_SHARE * (EV_HPC_PRICE * evEnergyMultiplier);
+      return kwhEffective * weightedPrice;
+    }
+
+    function computeIceAnnualEnergy(annualKm, consumptionL, fuelPrice, iceEnergyMultiplier, kmMultiplier) {
+      const effectiveKm = annualKm * kmMultiplier;
+      const liters = effectiveKm * (consumptionL / 100);
+      return liters * (fuelPrice * iceEnergyMultiplier);
+    }
+
+    function buildVehicleTotals(cfg) {
+      const annualRunning = cfg.annualEnergy + cfg.annualFixed;
+
+      if (cfg.acquisitionMode === "lease") {
+        const acquisition = cfg.leaseDownPayment;
+        const financing = cfg.leaseMonthlyRate * 12 * cfg.years;
+        const residual = 0;
+        const total = acquisition + financing + annualRunning * cfg.years;
+        return {
+          total,
+          components: {
+            Anschaffung: acquisition,
+            Energie: cfg.annualEnergy * cfg.years,
+            Fixkosten: cfg.annualFixed * cfg.years,
+            Finanzierung: financing,
+            Restwert: residual
+          }
+        };
+      }
+
+      const acquisition = cfg.purchasePrice;
+      const financing = 0;
+      const residual = cfg.purchasePrice * (cfg.residualPercent / 100);
+      const total = acquisition + financing + annualRunning * cfg.years - residual;
+      return {
+        total,
+        components: {
+          Anschaffung: acquisition,
+          Energie: cfg.annualEnergy * cfg.years,
+          Fixkosten: cfg.annualFixed * cfg.years,
+          Finanzierung: financing,
+          Restwert: residual
+        }
+      };
+    }
+
+    function evaluate(inputs, multipliers = { evEnergy: 1.0, iceEnergy: 1.0, km: 1.0 }) {
+      const annualEvEnergy = computeEvAnnualEnergy(
+        inputs.annualKm,
+        inputs.evConsumption,
+        inputs.manualHomePrice,
+        multipliers.evEnergy,
+        multipliers.km
+      );
+      const annualIceEnergy = computeIceAnnualEnergy(
+        inputs.annualKm,
+        inputs.iceConsumption,
+        inputs.manualFuelPrice,
+        multipliers.iceEnergy,
+        multipliers.km
+      );
+
+      const annualEvFixed = inputs.evMaintenance + inputs.evInsurance + inputs.evTax;
+      const annualIceFixed = inputs.iceMaintenance + inputs.iceInsurance + inputs.iceTax;
+
+      const ev = buildVehicleTotals({
+        years: inputs.years,
+        acquisitionMode: inputs.acquisitionMode,
+        purchasePrice: inputs.evPurchase,
+        residualPercent: inputs.evResidual,
+        leaseMonthlyRate: inputs.evLeaseRate,
+        leaseDownPayment: inputs.evLeaseDown,
+        annualEnergy: annualEvEnergy,
+        annualFixed: annualEvFixed
+      });
+
+      const ice = buildVehicleTotals({
+        years: inputs.years,
+        acquisitionMode: inputs.acquisitionMode,
+        purchasePrice: inputs.icePurchase,
+        residualPercent: inputs.iceResidual,
+        leaseMonthlyRate: inputs.iceLeaseRate,
+        leaseDownPayment: inputs.iceLeaseDown,
+        annualEnergy: annualIceEnergy,
+        annualFixed: annualIceFixed
+      });
+
+      const totalKm = inputs.annualKm * multipliers.km * inputs.years;
+      const evCostPerKm = totalKm > 0 ? ev.total / totalKm : 0;
+      const iceCostPerKm = totalKm > 0 ? ice.total / totalKm : 0;
+
+      const evEffective = {
+        Anschaffung: ev.components.Anschaffung,
+        Energie: ev.components.Energie,
+        Fixkosten: ev.components.Fixkosten,
+        Finanzierung: ev.components.Finanzierung,
+        Restwert: -ev.components.Restwert
+      };
+      const iceEffective = {
+        Anschaffung: ice.components.Anschaffung,
+        Energie: ice.components.Energie,
+        Fixkosten: ice.components.Fixkosten,
+        Finanzierung: ice.components.Finanzierung,
+        Restwert: -ice.components.Restwert
+      };
+
+      const drivers = Object.keys(evEffective)
+        .map((key) => ({ key, delta: evEffective[key] - iceEffective[key] }))
+        .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
+        .slice(0, 3);
+
+      const recommendation = ev.total < ice.total
+        ? `Empfehlung: Elektro ist ueber ${inputs.years} Jahre voraussichtlich guenstiger (Vorteil ca. ${formatNumber(ice.total - ev.total, 0)} EUR).`
+        : `Empfehlung: Verbrenner ist ueber ${inputs.years} Jahre derzeit guenstiger (Vorteil ca. ${formatNumber(ev.total - ice.total, 0)} EUR).`;
+
+      return {
+        evTotal: ev.total,
+        iceTotal: ice.total,
+        evCostPerKm,
+        iceCostPerKm,
+        drivers,
+        recommendation
+      };
+    }
+
+    function runSensitivity(inputs) {
+      const scenarios = [
+        { label: "Strom-Preis +20%", evEnergy: 1.2, iceEnergy: 1.0, km: 1.0 },
+        { label: "Strom-Preis -20%", evEnergy: 0.8, iceEnergy: 1.0, km: 1.0 },
+        { label: "Sprit-Preis +20%", evEnergy: 1.0, iceEnergy: 1.2, km: 1.0 },
+        { label: "Sprit-Preis -20%", evEnergy: 1.0, iceEnergy: 0.8, km: 1.0 },
+        { label: "km/Jahr +20%", evEnergy: 1.0, iceEnergy: 1.0, km: 1.2 },
+        { label: "km/Jahr -20%", evEnergy: 1.0, iceEnergy: 1.0, km: 0.8 }
+      ];
+
+      return scenarios.map((s) => {
+        const res = evaluate(inputs, s);
+        return {
+          scenario: s.label,
+          evTotal: res.evTotal,
+          iceTotal: res.iceTotal,
+          delta: res.evTotal - res.iceTotal
+        };
+      });
+    }
+
+    function collectInputs() {
+      const acquisitionMode = document.getElementById("acquisition_mode").value;
+      if (!["buy", "lease"].includes(acquisitionMode)) {
+        throw new Error("Kaufen/Leasen muss buy oder lease sein.");
+      }
+
+      const years = parseNumber("years", "Jahre", 1, 30);
+      const annualKm = parseNumber("annual_km", "km/Jahr", 0, 300000);
+      const manualHomePrice = parseNumber("manual_home_price", "Manueller Strompreis", 0, 5);
+      const manualFuelPrice = parseNumber("manual_fuel_price", "Spritpreis manuell", 0, 5);
+
+      const evPurchaseRaw = parseNumber("ev_purchase_price", "Elektro Kaufpreis", 0, 300000);
+      const icePurchaseRaw = parseNumber("ice_purchase_price", "Verbrenner Kaufpreis", 0, 300000);
+
+      return {
+        years,
+        annualKm,
+        acquisitionMode,
+        manualHomePrice,
+        manualFuelPrice,
+
+        evPurchase: acquisitionMode === "buy" ? evPurchaseRaw : 0,
+        evLeaseRate: parseNumber("ev_lease_monthly_rate", "Elektro Leasingrate", 0, 20000),
+        evLeaseDown: parseNumber("ev_lease_down_payment", "Elektro Sonderzahlung", 0, 200000),
+        evConsumption: parseNumber("ev_consumption_kwh", "Elektro Verbrauch", 1, 60),
+        evMaintenance: parseNumber("ev_maintenance_year", "Elektro Wartung/Jahr", 0, 50000),
+        evInsurance: parseNumber("ev_insurance_year", "Elektro Versicherung/Jahr", 0, 50000),
+        evTax: parseNumber("ev_tax_year", "Elektro Steuer/Jahr", 0, 5000),
+        evResidual: acquisitionMode === "buy"
+          ? parseNumber("ev_residual_percent", "Elektro Restwert", 0, 100)
+          : 0,
+
+        icePurchase: acquisitionMode === "buy" ? icePurchaseRaw : 0,
+        iceLeaseRate: parseNumber("ice_lease_monthly_rate", "Verbrenner Leasingrate", 0, 20000),
+        iceLeaseDown: parseNumber("ice_lease_down_payment", "Verbrenner Sonderzahlung", 0, 200000),
+        iceConsumption: parseNumber("ice_consumption_l", "Verbrenner Verbrauch", 1, 40),
+        iceMaintenance: parseNumber("ice_maintenance_year", "Verbrenner Wartung/Jahr", 0, 50000),
+        iceInsurance: parseNumber("ice_insurance_year", "Verbrenner Versicherung/Jahr", 0, 50000),
+        iceTax: parseNumber("ice_tax_year", "Verbrenner Steuer/Jahr", 0, 5000),
+        iceResidual: acquisitionMode === "buy"
+          ? parseNumber("ice_residual_percent", "Verbrenner Restwert", 0, 100)
+          : 0
+      };
+    }
+
+    function renderResults(result, sensitivity) {
+      document.getElementById("kpi-ev-total").textContent = formatEur(result.evTotal, 0);
+      document.getElementById("kpi-ice-total").textContent = formatEur(result.iceTotal, 0);
+      document.getElementById("kpi-ev-km").textContent = `${formatNumber(result.evCostPerKm, 3)} EUR`;
+      document.getElementById("kpi-ice-km").textContent = `${formatNumber(result.iceCostPerKm, 3)} EUR`;
+      document.getElementById("recommendation").textContent = result.recommendation;
+
+      const driversEl = document.getElementById("drivers");
+      driversEl.innerHTML = "";
+      for (const row of result.drivers) {
+        const li = document.createElement("li");
+        const sign = row.delta >= 0 ? "+" : "-";
+        li.textContent = `${row.key}: ${sign}${formatEur(Math.abs(row.delta), 0)}`;
+        driversEl.appendChild(li);
+      }
+
+      const tbody = document.getElementById("sensitivity-body");
+      tbody.innerHTML = "";
+      for (const row of sensitivity) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = [
+          `<td>${row.scenario}</td>`,
+          `<td>${formatEur(row.evTotal, 0)}</td>`,
+          `<td>${formatEur(row.iceTotal, 0)}</td>`,
+          `<td>${formatEur(row.delta, 0)}</td>`
+        ].join("");
+        tbody.appendChild(tr);
+      }
+
+      document.getElementById("results").classList.remove("hidden");
+    }
+
+    function showError(message) {
+      const node = document.getElementById("error");
+      node.textContent = message;
+      node.style.display = "block";
+    }
+
+    function clearError() {
+      const node = document.getElementById("error");
+      node.textContent = "";
+      node.style.display = "none";
+    }
+
+    document.getElementById("acquisition_mode").addEventListener("change", toggleAcquisitionFields);
+
+    document.getElementById("calc-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      clearError();
+
+      try {
+        const inputs = collectInputs();
+        const result = evaluate(inputs);
+        const sensitivity = runSensitivity(inputs);
+        renderResults(result, sensitivity);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Unbekannter Fehler";
+        showError(message);
+      }
+    });
+
+    setDefaults();
+  </script>
+</body>
+</html>
