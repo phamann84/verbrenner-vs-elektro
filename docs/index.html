@@ -96,6 +96,39 @@
       cursor: pointer;
     }
 
+    .mode-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .mode-switch {
+      display: inline-flex;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #f7f4ed;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .mode-btn {
+      background: transparent;
+      color: var(--ink);
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .mode-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
     .error {
       display: none;
       margin-top: 12px;
@@ -173,8 +206,22 @@
     <h1>Elektro vs Verbrenner Gesamtkosten</h1>
 
     <div class="card">
+      <div class="mode-wrap">
+        <div>
+          <h2>Anschaffung</h2>
+          <p class="sub">Global fuer Elektro und Verbrenner</p>
+        </div>
+        <div class="mode-switch" role="group" aria-label="Kaufen oder Leasen">
+          <button class="mode-btn" id="mode-buy" type="button">Kaufen</button>
+          <button class="mode-btn" id="mode-lease" type="button">Leasen</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
       <p class="sub">Statische GitHub-Pages-Version: Berechnung laeuft direkt im Browser.</p>
       <form id="calc-form">
+        <input id="acquisition_mode" type="hidden">
         <div class="grid">
           <div>
             <label for="years">Jahre</label>
@@ -183,13 +230,6 @@
           <div>
             <label for="annual_km">km/Jahr</label>
             <input id="annual_km" type="number" step="100" min="0">
-          </div>
-          <div>
-            <label for="acquisition_mode">Kaufen/Leasen</label>
-            <select id="acquisition_mode">
-              <option value="buy">Kaufen</option>
-              <option value="lease">Leasen</option>
-            </select>
           </div>
           <div>
             <label for="manual_home_price">Manueller Strompreis (EUR/kWh)</label>
@@ -387,6 +427,16 @@
       }
     }
 
+    function setAcquisitionMode(mode) {
+      if (!["buy", "lease"].includes(mode)) {
+        return;
+      }
+      document.getElementById("acquisition_mode").value = mode;
+      document.getElementById("mode-buy").classList.toggle("active", mode === "buy");
+      document.getElementById("mode-lease").classList.toggle("active", mode === "lease");
+      toggleAcquisitionFields();
+    }
+
     function setDefaults() {
       for (const [key, value] of Object.entries(DEFAULTS)) {
         const node = document.getElementById(key);
@@ -394,7 +444,7 @@
           node.value = value;
         }
       }
-      toggleAcquisitionFields();
+      setAcquisitionMode(DEFAULTS.acquisition_mode);
     }
 
     function computeEvAnnualEnergy(annualKm, consumptionKwh, homePrice, evEnergyMultiplier, kmMultiplier) {
@@ -639,7 +689,8 @@
       node.style.display = "none";
     }
 
-    document.getElementById("acquisition_mode").addEventListener("change", toggleAcquisitionFields);
+    document.getElementById("mode-buy").addEventListener("click", () => setAcquisitionMode("buy"));
+    document.getElementById("mode-lease").addEventListener("click", () => setAcquisitionMode("lease"));
 
     document.getElementById("calc-form").addEventListener("submit", (event) => {
       event.preventDefault();
