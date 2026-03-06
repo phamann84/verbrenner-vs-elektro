@@ -145,7 +145,7 @@ gh repo create phamann84/verbrenner-vs-elektro --public --source=. --remote=orig
 3. Optional: `render.yaml` im Repo direkt uebernehmen (Blueprint Deploy).
 4. Settings:
    - Build Command: `pip install -r requirements.txt`
-   - Start Command: `gunicorn -w 2 -b 0.0.0.0:$PORT tco_app.wsgi:app`
+   - Start Command: `PYTHONPATH=src gunicorn -w 2 -b 0.0.0.0:$PORT tco_app.wsgi:app`
 5. Deploy starten.
 6. Nach dem Deploy die Render-URL oeffnen (z.B. `https://verbrenner-vs-elektro.onrender.com`).
 

@@ -4,4 +4,4 @@ services:
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn -w 2 -b 0.0.0.0:$PORT tco_app.wsgi:app
+    startCommand: PYTHONPATH=src gunicorn -w 2 -b 0.0.0.0:$PORT tco_app.wsgi:app
