@@ -142,11 +142,12 @@ gh repo create phamann84/verbrenner-vs-elektro --public --source=. --remote=orig
 ### 3) Auf Render deployen
 1. Auf [https://render.com](https://render.com) einloggen.
 2. `New +` -> `Web Service` -> GitHub Repo `phamann84/verbrenner-vs-elektro` waehlen.
-3. Settings:
+3. Optional: `render.yaml` im Repo direkt uebernehmen (Blueprint Deploy).
+4. Settings:
    - Build Command: `pip install -r requirements.txt`
    - Start Command: `gunicorn -w 2 -b 0.0.0.0:$PORT tco_app.wsgi:app`
-4. Deploy starten.
-5. Nach dem Deploy die Render-URL oeffnen (z.B. `https://verbrenner-vs-elektro.onrender.com`).
+5. Deploy starten.
+6. Nach dem Deploy die Render-URL oeffnen (z.B. `https://verbrenner-vs-elektro.onrender.com`).
 
 ## Eingaben (abgedeckt)
 ### Allgemein
