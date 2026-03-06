@@ -4,14 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Elektro vs Verbrenner Gesamtkosten</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f4f2ec;
-      --card: #ffffff;
-      --ink: #21252b;
-      --muted: #5d6470;
-      --accent: #0a7f5a;
-      --border: #d8d2c6;
+      --bg: #f5eee5;
+      --bg-deep: #ead5bb;
+      --card: rgba(255, 250, 244, 0.84);
+      --card-strong: #fffaf5;
+      --ink: #16221d;
+      --muted: #5c645e;
+      --accent: #166b51;
+      --accent-strong: #0d503c;
+      --accent-warm: #d57a3d;
+      --accent-soft: #e9f2ec;
+      --border: rgba(38, 51, 44, 0.12);
+      --shadow: 0 24px 60px rgba(70, 47, 23, 0.12);
       --error-bg: #fff2f2;
       --error-border: #f0b9b9;
       --error-ink: #8f1d1d;
@@ -21,165 +30,432 @@
 
     body {
       margin: 0;
-      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(circle at 12% 12%, #ebe4d7 0%, transparent 30%),
-        radial-gradient(circle at 86% 82%, #dcebe2 0%, transparent 28%),
+        radial-gradient(circle at 12% 14%, rgba(239, 194, 141, 0.56) 0%, transparent 28%),
+        radial-gradient(circle at 86% 20%, rgba(79, 136, 108, 0.18) 0%, transparent 24%),
+        radial-gradient(circle at 78% 78%, rgba(24, 88, 68, 0.14) 0%, transparent 28%),
         var(--bg);
     }
 
     .container {
-      max-width: 1100px;
-      margin: 24px auto;
-      padding: 0 16px 24px;
+      max-width: 1200px;
+      margin: 24px auto 36px;
+      padding: 0 18px 24px;
     }
 
     h1 {
-      margin: 0 0 16px;
-      font-size: 40px;
-      letter-spacing: 0.02em;
-      font-family: "Bebas Neue", "Arial Narrow", sans-serif;
+      margin: 0;
+      font-size: clamp(3rem, 5vw, 5.4rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      font-family: "Fraunces", Georgia, serif;
     }
 
     h2 {
-      margin: 0 0 10px;
-      font-size: 20px;
+      margin: 0;
+      font-size: 1.3rem;
+      letter-spacing: -0.03em;
     }
 
     .sub {
       color: var(--muted);
-      margin: 0 0 14px;
-      font-size: 13px;
+      margin: 8px 0 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
     }
 
     .card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
+      border-radius: 24px;
+      padding: 20px;
       margin-bottom: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(290px, 0.8fr);
+      gap: 18px;
+      background:
+        linear-gradient(135deg, rgba(255, 247, 239, 0.98), rgba(245, 238, 229, 0.84)),
+        var(--card-strong);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      right: -70px;
+      top: -70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(213, 122, 61, 0.26), rgba(213, 122, 61, 0));
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-lede {
+      max-width: 56ch;
+      margin: 14px 0 18px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .hero-metric {
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(22, 107, 81, 0.14);
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .hero-metric .label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .hero-metric .value {
+      display: block;
+      margin-top: 6px;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .mode-card {
+      position: relative;
+      z-index: 1;
+      background: linear-gradient(160deg, #12352b, #1d5744 70%, #2c7157);
+      color: #f8fbf8;
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .mode-card h2 {
+      font-size: 1.55rem;
+      font-family: "Fraunces", Georgia, serif;
+    }
+
+    .mode-card p {
+      margin: 10px 0 0;
+      color: rgba(248, 251, 248, 0.78);
+      line-height: 1.55;
+      font-size: 0.95rem;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
+      gap: 14px;
+    }
+
+    .grid > div {
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(38, 51, 44, 0.08);
+      background: rgba(255, 255, 255, 0.76);
     }
 
     label {
       display: block;
-      font-size: 13px;
+      font-size: 0.82rem;
       color: var(--muted);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      letter-spacing: 0.01em;
     }
 
     input, select {
       width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 9px 10px;
-      font-size: 14px;
-      background: #fff;
+      border: 1px solid rgba(22, 34, 29, 0.12);
+      border-radius: 14px;
+      padding: 12px 13px;
+      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.94);
       color: var(--ink);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: rgba(22, 107, 81, 0.48);
+      box-shadow: 0 0 0 4px rgba(22, 107, 81, 0.1);
+      transform: translateY(-1px);
     }
 
     button {
       border: 0;
-      border-radius: 10px;
-      background: linear-gradient(90deg, var(--accent), #14a674);
+      border-radius: 16px;
+      background: linear-gradient(90deg, var(--accent), #18a26f);
       color: white;
-      padding: 11px 16px;
-      font-size: 14px;
+      padding: 13px 18px;
+      font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      box-shadow: 0 14px 24px rgba(22, 107, 81, 0.2);
+    }
+
+    button:hover {
+      filter: brightness(1.03);
+      transform: translateY(-1px);
     }
 
     .mode-wrap {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 18px;
       flex-wrap: wrap;
     }
 
     .mode-switch {
       display: inline-flex;
-      border: 1px solid var(--border);
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 999px;
-      background: #f7f4ed;
+      background: rgba(255, 255, 255, 0.08);
       padding: 4px;
       gap: 4px;
     }
 
     .mode-btn {
+      flex: 1;
       background: transparent;
-      color: var(--ink);
+      color: rgba(248, 251, 248, 0.84);
       border: 0;
       border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 14px;
+      padding: 11px 14px;
+      font-size: 0.95rem;
       font-weight: 700;
       line-height: 1;
+      box-shadow: none;
     }
 
     .mode-btn.active {
-      background: var(--accent);
-      color: #fff;
+      background: linear-gradient(90deg, #f7f3ed, #ffffff);
+      color: var(--accent-strong);
     }
 
-    .error {
-      display: none;
+    .mode-btn:hover {
+      transform: none;
+      filter: none;
+    }
+
+    .mode-note {
       margin-top: 12px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--error-border);
-      background: var(--error-bg);
-      color: var(--error-ink);
-      font-size: 14px;
+      min-height: 44px;
+      color: rgba(248, 251, 248, 0.78);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .mode-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .mode-tag {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(248, 251, 248, 0.88);
+      font-size: 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .main-grid.results-ready {
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+    }
+
+    .form-card {
+      background: linear-gradient(180deg, rgba(255, 250, 244, 0.9), rgba(255, 255, 255, 0.76));
+    }
+
+    .results-stack .card {
+      margin-bottom: 0;
+    }
+
+    .results-stack {
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+
+    .section-block + .section-block {
+      margin-top: 16px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .section-head h2 {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 1.5rem;
+    }
+
+    .section-kicker {
+      display: inline-block;
+      margin-bottom: 6px;
+      color: var(--accent-warm);
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .section-text {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+      margin: 6px 0 0;
+    }
+
+    .action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .action-row .mini-note {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .result-card {
+      background:
+        linear-gradient(135deg, rgba(255, 251, 246, 0.96), rgba(236, 245, 239, 0.8)),
+        var(--card-strong);
     }
 
     .summary {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
     }
 
     .kpi {
-      border: 1px dashed var(--border);
-      border-radius: 12px;
-      padding: 10px;
-      background: #fff;
+      border: 1px solid rgba(22, 107, 81, 0.12);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .kpi:nth-child(2n) {
+      background: rgba(245, 238, 229, 0.82);
     }
 
     .kpi .k {
       color: var(--muted);
-      font-size: 12px;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
     }
 
     .kpi .v {
       font-weight: 700;
-      font-size: 18px;
-      margin-top: 4px;
+      font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+      margin-top: 8px;
+      line-height: 1.1;
     }
 
-    .hint {
-      font-size: 12px;
+    .recommendation {
+      margin: 16px 0 0;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+
+    .driver-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .driver-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(22, 34, 29, 0.08);
+    }
+
+    .driver-list .driver-name {
       color: var(--muted);
-      margin-top: 8px;
+      font-size: 0.9rem;
+    }
+
+    .driver-list .driver-value {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 14px;
+      padding-bottom: 4px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13px;
+      font-size: 0.9rem;
     }
 
     th, td {
       text-align: right;
-      border-bottom: 1px solid #ece7dc;
-      padding: 6px;
+      border-bottom: 1px solid rgba(38, 51, 44, 0.08);
+      padding: 10px 8px;
     }
 
     th:first-child,
@@ -187,167 +463,304 @@
       text-align: left;
     }
 
-    ul {
-      margin: 0;
-      padding-left: 18px;
+    th {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .delta-positive {
+      color: #7b2f13;
+    }
+
+    .delta-negative {
+      color: var(--accent-strong);
+    }
+
+    .error {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--error-border);
+      background: var(--error-bg);
+      color: var(--error-ink);
+      font-size: 0.92rem;
     }
 
     .hidden {
       display: none;
     }
 
+    @media (max-width: 980px) {
+      .hero-card,
+      .main-grid,
+      .main-grid.results-ready {
+        grid-template-columns: 1fr;
+      }
+
+      .summary,
+      .hero-metrics {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
     @media (max-width: 700px) {
-      h1 { font-size: 34px; }
+      .container {
+        padding: 0 14px 24px;
+      }
+
+      .card {
+        border-radius: 20px;
+        padding: 16px;
+      }
+
+      .summary,
+      .hero-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .action-row {
+        align-items: stretch;
+      }
+
+      button {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Elektro vs Verbrenner Gesamtkosten</h1>
-
-    <div class="card">
-      <div class="mode-wrap">
-        <div>
-          <h2>Anschaffung</h2>
+    <div class="card hero-card">
+      <div class="hero-copy">
+        <p class="eyebrow">Kostenvergleich für echte Fahrprofile</p>
+        <h1>Elektro oder Verbrenner?</h1>
+        <p class="hero-lede">
+          Vergleiche Anschaffung, Energie, Wartung und laufende Kosten in einer Oberfläche,
+          die wie ein sauberer Produktrechner wirkt und nicht wie ein Tabellenblatt.
+        </p>
+        <div class="hero-metrics">
+          <div class="hero-metric">
+            <span class="label">Modus</span>
+            <span class="value" id="hero-mode-value">Leasen</span>
+          </div>
+          <div class="hero-metric">
+            <span class="label">Fokus</span>
+            <span class="value">Gesamtkosten</span>
+          </div>
+          <div class="hero-metric">
+            <span class="label">Vergleich</span>
+            <span class="value">Elektro vs Verbrenner</span>
+          </div>
         </div>
-        <div class="mode-switch" role="group" aria-label="Kaufen oder Leasen">
-          <button class="mode-btn" id="mode-buy" type="button">Kaufen</button>
-          <button class="mode-btn" id="mode-lease" type="button">Leasen</button>
+      </div>
+      <div class="mode-card">
+        <p class="eyebrow" style="color: rgba(248, 251, 248, 0.72);">Anschaffung</p>
+        <h2>Kaufen oder Leasen</h2>
+        <div class="mode-wrap" style="margin-top: 18px;">
+          <div class="mode-switch" role="group" aria-label="Kaufen oder Leasen">
+            <button class="mode-btn" id="mode-buy" type="button">Kaufen</button>
+            <button class="mode-btn" id="mode-lease" type="button">Leasen</button>
+          </div>
+        </div>
+        <p class="mode-note" id="mode-copy"></p>
+        <div class="mode-tags">
+          <span class="mode-tag">manuelle Strompreise</span>
+          <span class="mode-tag">manuelle Spritpreise</span>
+          <span class="mode-tag">direkter Kostenvergleich</span>
         </div>
       </div>
     </div>
 
-    <div class="card">
-      <form id="calc-form">
-        <input id="acquisition_mode" type="hidden">
-        <div class="grid">
-          <div>
-            <label for="years">Jahre</label>
-            <input id="years" type="number" step="1" min="1" max="30">
-          </div>
-          <div>
-            <label for="annual_km">km/Jahr</label>
-            <input id="annual_km" type="number" step="100" min="0">
-          </div>
-          <div>
-            <label for="manual_home_price">Strompreis (EUR/kWh)</label>
-            <input id="manual_home_price" type="number" step="0.001" min="0">
-          </div>
-          <div>
-            <label for="manual_fuel_price">Spritpreis (EUR/l)</label>
-            <input id="manual_fuel_price" type="number" step="0.001" min="0">
-          </div>
-        </div>
+    <div class="main-grid" id="main-grid">
+      <div class="card form-card">
+        <form id="calc-form">
+          <input id="acquisition_mode" type="hidden">
 
-        <h2 style="margin-top:16px;">Elektro</h2>
-        <div class="grid">
-          <div class="buy-only">
-            <label for="ev_purchase_price">Elektro Kaufpreis</label>
-            <input id="ev_purchase_price" type="number" step="100" min="0">
+          <div class="section-block">
+            <div class="section-head">
+              <div>
+                <span class="section-kicker">Allgemein</span>
+                <h2>Rahmendaten</h2>
+              </div>
+              <p class="section-text">Zeitraum, Fahrleistung und Energiepreise definieren den Kern des Vergleichs.</p>
+            </div>
+            <div class="grid">
+              <div>
+                <label for="years">Jahre</label>
+                <input id="years" type="number" step="1" min="1" max="30">
+              </div>
+              <div>
+                <label for="annual_km">km/Jahr</label>
+                <input id="annual_km" type="number" step="100" min="0">
+              </div>
+              <div>
+                <label for="manual_home_price">Strompreis (EUR/kWh)</label>
+                <input id="manual_home_price" type="number" step="0.001" min="0">
+              </div>
+              <div>
+                <label for="manual_fuel_price">Spritpreis (EUR/l)</label>
+                <input id="manual_fuel_price" type="number" step="0.001" min="0">
+              </div>
+            </div>
           </div>
-          <div class="lease-only">
-            <label for="ev_lease_monthly_rate">Elektro Leasingrate/Monat (EUR)</label>
-            <input id="ev_lease_monthly_rate" type="number" step="1" min="0">
-          </div>
-          <div class="lease-only">
-            <label for="ev_lease_down_payment">Elektro Sonderzahlung (EUR)</label>
-            <input id="ev_lease_down_payment" type="number" step="100" min="0">
-          </div>
-          <div>
-            <label for="ev_consumption_kwh">Verbrauch (kWh/100km)</label>
-            <input id="ev_consumption_kwh" type="number" step="0.1" min="0">
-          </div>
-          <div>
-            <label for="ev_maintenance_year">Wartung/Jahr</label>
-            <input id="ev_maintenance_year" type="number" step="10" min="0">
-          </div>
-          <div>
-            <label for="ev_insurance_year">Versicherung/Jahr</label>
-            <input id="ev_insurance_year" type="number" step="10" min="0">
-          </div>
-          <div>
-            <label for="ev_tax_year">Steuer/Jahr</label>
-            <input id="ev_tax_year" type="number" step="10" min="0">
-          </div>
-          <div class="buy-only">
-            <label for="ev_residual_percent">Restwert (%)</label>
-            <input id="ev_residual_percent" type="number" step="1" min="0" max="100">
-          </div>
-        </div>
 
-        <h2 style="margin-top:16px;">Verbrenner</h2>
-        <div class="grid">
-          <div class="buy-only">
-            <label for="ice_purchase_price">Verbrenner Kaufpreis</label>
-            <input id="ice_purchase_price" type="number" step="100" min="0">
+          <div class="section-block">
+            <div class="section-head">
+              <div>
+                <span class="section-kicker">Elektro</span>
+                <h2>Fahrzeugprofil</h2>
+              </div>
+              <p class="section-text">Alle Werte für Kauf oder Leasing wechseln automatisch mit dem globalen Modus.</p>
+            </div>
+            <div class="grid">
+              <div class="buy-only">
+                <label for="ev_purchase_price">Elektro Kaufpreis</label>
+                <input id="ev_purchase_price" type="number" step="100" min="0">
+              </div>
+              <div class="lease-only">
+                <label for="ev_lease_monthly_rate">Elektro Leasingrate/Monat (EUR)</label>
+                <input id="ev_lease_monthly_rate" type="number" step="1" min="0">
+              </div>
+              <div class="lease-only">
+                <label for="ev_lease_down_payment">Elektro Sonderzahlung (EUR)</label>
+                <input id="ev_lease_down_payment" type="number" step="100" min="0">
+              </div>
+              <div>
+                <label for="ev_consumption_kwh">Verbrauch (kWh/100km)</label>
+                <input id="ev_consumption_kwh" type="number" step="0.1" min="0">
+              </div>
+              <div>
+                <label for="ev_maintenance_year">Wartung/Jahr</label>
+                <input id="ev_maintenance_year" type="number" step="10" min="0">
+              </div>
+              <div>
+                <label for="ev_insurance_year">Versicherung/Jahr</label>
+                <input id="ev_insurance_year" type="number" step="10" min="0">
+              </div>
+              <div>
+                <label for="ev_tax_year">Steuer/Jahr</label>
+                <input id="ev_tax_year" type="number" step="10" min="0">
+              </div>
+              <div class="buy-only">
+                <label for="ev_residual_percent">Restwert (%)</label>
+                <input id="ev_residual_percent" type="number" step="1" min="0" max="100">
+              </div>
+            </div>
           </div>
-          <div class="lease-only">
-            <label for="ice_lease_monthly_rate">Verbrenner Leasingrate/Monat (EUR)</label>
-            <input id="ice_lease_monthly_rate" type="number" step="1" min="0">
-          </div>
-          <div class="lease-only">
-            <label for="ice_lease_down_payment">Verbrenner Sonderzahlung (EUR)</label>
-            <input id="ice_lease_down_payment" type="number" step="100" min="0">
-          </div>
-          <div>
-            <label for="ice_consumption_l">Verbrauch (l/100km)</label>
-            <input id="ice_consumption_l" type="number" step="0.1" min="0">
-          </div>
-          <div>
-            <label for="ice_maintenance_year">Wartung/Jahr</label>
-            <input id="ice_maintenance_year" type="number" step="10" min="0">
-          </div>
-          <div>
-            <label for="ice_insurance_year">Versicherung/Jahr</label>
-            <input id="ice_insurance_year" type="number" step="10" min="0">
-          </div>
-          <div>
-            <label for="ice_tax_year">Steuer/Jahr</label>
-            <input id="ice_tax_year" type="number" step="10" min="0">
-          </div>
-          <div class="buy-only">
-            <label for="ice_residual_percent">Restwert (%)</label>
-            <input id="ice_residual_percent" type="number" step="1" min="0" max="100">
-          </div>
-        </div>
 
-        <div style="margin-top:12px;">
-          <button type="submit">Berechnen</button>
-        </div>
-        <div id="error" class="error"></div>
-      </form>
-    </div>
+          <div class="section-block">
+            <div class="section-head">
+              <div>
+                <span class="section-kicker">Verbrenner</span>
+                <h2>Fahrzeugprofil</h2>
+              </div>
+              <p class="section-text">Damit die Empfehlung belastbar bleibt, solltest du hier reale Verbrauchs- und Fixkosten eintragen.</p>
+            </div>
+            <div class="grid">
+              <div class="buy-only">
+                <label for="ice_purchase_price">Verbrenner Kaufpreis</label>
+                <input id="ice_purchase_price" type="number" step="100" min="0">
+              </div>
+              <div class="lease-only">
+                <label for="ice_lease_monthly_rate">Verbrenner Leasingrate/Monat (EUR)</label>
+                <input id="ice_lease_monthly_rate" type="number" step="1" min="0">
+              </div>
+              <div class="lease-only">
+                <label for="ice_lease_down_payment">Verbrenner Sonderzahlung (EUR)</label>
+                <input id="ice_lease_down_payment" type="number" step="100" min="0">
+              </div>
+              <div>
+                <label for="ice_consumption_l">Verbrauch (l/100km)</label>
+                <input id="ice_consumption_l" type="number" step="0.1" min="0">
+              </div>
+              <div>
+                <label for="ice_maintenance_year">Wartung/Jahr</label>
+                <input id="ice_maintenance_year" type="number" step="10" min="0">
+              </div>
+              <div>
+                <label for="ice_insurance_year">Versicherung/Jahr</label>
+                <input id="ice_insurance_year" type="number" step="10" min="0">
+              </div>
+              <div>
+                <label for="ice_tax_year">Steuer/Jahr</label>
+                <input id="ice_tax_year" type="number" step="10" min="0">
+              </div>
+              <div class="buy-only">
+                <label for="ice_residual_percent">Restwert (%)</label>
+                <input id="ice_residual_percent" type="number" step="1" min="0" max="100">
+              </div>
+            </div>
+          </div>
 
-    <div id="results" class="hidden">
-      <div class="card">
-        <h2>Zusammenfassung</h2>
-        <div class="summary">
-          <div class="kpi"><div class="k">Gesamtkosten Elektro</div><div class="v" id="kpi-ev-total"></div></div>
-          <div class="kpi"><div class="k">Gesamtkosten Verbrenner</div><div class="v" id="kpi-ice-total"></div></div>
-          <div class="kpi"><div class="k">Kosten/km Elektro</div><div class="v" id="kpi-ev-km"></div></div>
-          <div class="kpi"><div class="k">Kosten/km Verbrenner</div><div class="v" id="kpi-ice-km"></div></div>
-        </div>
-        <p id="recommendation" style="margin-top:10px;"></p>
+          <div class="action-row">
+            <p class="mini-note">Die Berechnung bleibt lokal im Browser und reagiert sofort auf deine Eingaben.</p>
+            <button type="submit">Vergleich berechnen</button>
+          </div>
+          <div id="error" class="error"></div>
+        </form>
       </div>
 
-      <div class="card">
-        <h2>Top 3 Kostentreiber (Delta Elektro minus Verbrenner)</h2>
-        <ul id="drivers"></ul>
-      </div>
+      <div id="results" class="hidden results-stack">
+        <div class="card result-card">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Auswertung</span>
+              <h2>So liegt dein Vergleich aktuell</h2>
+            </div>
+          </div>
+          <div class="summary">
+            <div class="kpi"><div class="k">Gesamtkosten Elektro</div><div class="v" id="kpi-ev-total"></div></div>
+            <div class="kpi"><div class="k">Gesamtkosten Verbrenner</div><div class="v" id="kpi-ice-total"></div></div>
+            <div class="kpi"><div class="k">Kosten/km Elektro</div><div class="v" id="kpi-ev-km"></div></div>
+            <div class="kpi"><div class="k">Kosten/km Verbrenner</div><div class="v" id="kpi-ice-km"></div></div>
+          </div>
+          <p id="recommendation" class="recommendation"></p>
+        </div>
 
-      <div class="card">
-        <h2>Sensitivität</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Szenario</th>
-              <th>Elektro</th>
-              <th>Verbrenner</th>
-              <th>Delta (Elektro-Verbrenner)</th>
-            </tr>
-          </thead>
-          <tbody id="sensitivity-body"></tbody>
-        </table>
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Treiber</span>
+              <h2>Was die Differenz wirklich bewegt</h2>
+            </div>
+          </div>
+          <ul id="drivers" class="driver-list"></ul>
+        </div>
+
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Sensitivität</span>
+              <h2>Wie robust das Ergebnis bleibt</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Szenario</th>
+                  <th>Elektro</th>
+                  <th>Verbrenner</th>
+                  <th>Delta</th>
+                </tr>
+              </thead>
+              <tbody id="sensitivity-body"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -431,6 +844,10 @@
       document.getElementById("acquisition_mode").value = mode;
       document.getElementById("mode-buy").classList.toggle("active", mode === "buy");
       document.getElementById("mode-lease").classList.toggle("active", mode === "lease");
+      document.getElementById("hero-mode-value").textContent = mode === "buy" ? "Kaufen" : "Leasen";
+      document.getElementById("mode-copy").textContent = mode === "buy"
+        ? "Kaufpreise und Restwerte sind aktiv. Du siehst damit den klassischen Eigentumsfall über den gesamten Zeitraum."
+        : "Leasingraten und Sonderzahlungen sind aktiv. Ideal, wenn du monatliche Belastung statt Restwertvergleich prüfen willst.";
       toggleAcquisitionFields();
     }
 
@@ -559,6 +976,7 @@
 
       const drivers = Object.keys(evEffective)
         .map((key) => ({ key, delta: evEffective[key] - iceEffective[key] }))
+        .filter((row) => Math.abs(row.delta) >= 1)
         .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
         .slice(0, 3);
 
@@ -643,6 +1061,7 @@
     }
 
     function renderResults(result, sensitivity) {
+      document.getElementById("main-grid").classList.add("results-ready");
       document.getElementById("kpi-ev-total").textContent = formatEur(result.evTotal, 0);
       document.getElementById("kpi-ice-total").textContent = formatEur(result.iceTotal, 0);
       document.getElementById("kpi-ev-km").textContent = `${formatNumber(result.evCostPerKm, 3)} EUR`;
@@ -651,10 +1070,15 @@
 
       const driversEl = document.getElementById("drivers");
       driversEl.innerHTML = "";
+      if (result.drivers.length === 0) {
+        const li = document.createElement("li");
+        li.innerHTML = `<span class="driver-name">Keine dominanten Kostentreiber</span><span class="driver-value">nahezu ausgeglichen</span>`;
+        driversEl.appendChild(li);
+      }
       for (const row of result.drivers) {
         const li = document.createElement("li");
         const sign = row.delta >= 0 ? "+" : "-";
-        li.textContent = `${row.key}: ${sign}${formatEur(Math.abs(row.delta), 0)}`;
+        li.innerHTML = `<span class="driver-name">${row.key}</span><span class="driver-value">${sign}${formatEur(Math.abs(row.delta), 0)}</span>`;
         driversEl.appendChild(li);
       }
 
@@ -662,11 +1086,12 @@
       tbody.innerHTML = "";
       for (const row of sensitivity) {
         const tr = document.createElement("tr");
+        const deltaClass = row.delta >= 0 ? "delta-positive" : "delta-negative";
         tr.innerHTML = [
           `<td>${row.scenario}</td>`,
           `<td>${formatEur(row.evTotal, 0)}</td>`,
           `<td>${formatEur(row.iceTotal, 0)}</td>`,
-          `<td>${formatEur(row.delta, 0)}</td>`
+          `<td class="${deltaClass}">${formatEur(row.delta, 0)}</td>`
         ].join("");
         tbody.appendChild(tr);
       }
