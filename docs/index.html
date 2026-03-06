@@ -336,7 +336,7 @@
       </div>
 
       <div class="card">
-        <h2>Sensitivitaet</h2>
+        <h2>Sensitivität</h2>
         <table>
           <thead>
             <tr>
@@ -348,7 +348,6 @@
           </thead>
           <tbody id="sensitivity-body"></tbody>
         </table>
-        <p class="hint">Szenarien: Strom +/-20%, Sprit +/-20%, km/Jahr +/-20%</p>
       </div>
     </div>
   </div>
@@ -564,8 +563,8 @@
         .slice(0, 3);
 
       const recommendation = ev.total < ice.total
-        ? `Empfehlung: Elektro ist ueber ${inputs.years} Jahre voraussichtlich guenstiger (Vorteil ca. ${formatNumber(ice.total - ev.total, 0)} EUR).`
-        : `Empfehlung: Verbrenner ist ueber ${inputs.years} Jahre derzeit guenstiger (Vorteil ca. ${formatNumber(ev.total - ice.total, 0)} EUR).`;
+        ? `Empfehlung: Elektro ist über ${inputs.years} Jahre voraussichtlich günstiger (Vorteil ca. ${formatNumber(ice.total - ev.total, 0)} EUR).`
+        : `Empfehlung: Verbrenner ist über ${inputs.years} Jahre derzeit günstiger (Vorteil ca. ${formatNumber(ev.total - ice.total, 0)} EUR).`;
 
       return {
         evTotal: ev.total,
