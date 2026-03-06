@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 
 from flask import Flask, render_template_string, request
@@ -45,6 +46,19 @@ from .models import (
 from .pricing import build_price_snapshot
 
 app = Flask(__name__)
+
+
+def _configure_logging() -> None:
+    log_level_name = os.getenv("LOG_LEVEL", "INFO").upper()
+    log_level = getattr(logging, log_level_name, logging.INFO)
+    logging.basicConfig(
+        level=log_level,
+        format="%(asctime)s %(levelname)s %(name)s %(message)s",
+    )
+    app.logger.setLevel(log_level)
+
+
+_configure_logging()
 
 
 def _format_de_number(value: float, decimals: int = 0) -> str:
@@ -622,8 +636,12 @@ def index():
             form[key] = request.form.get(key, DEFAULT_FORM[key])
         try:
             result = _build_and_run(form)
-        except Exception as exc:  # noqa: BLE001
+        except ValueError as exc:
+            app.logger.warning("Validierungsfehler in Web-Formular: %s | form=%s", exc, form)
             error = str(exc)
+        except Exception:  # noqa: BLE001
+            app.logger.exception("Unbehandelter Fehler bei der Berechnung | form=%s", form)
+            error = "Interner Fehler bei der Berechnung. Bitte spaeter erneut versuchen."
 
     ev_total = None
     ice_total = None

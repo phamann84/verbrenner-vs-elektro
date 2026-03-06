@@ -1,4 +1,4 @@
-# Elektro vs Verbrenner TCO (CLI + Web)
+# Elektro vs Verbrenner Gesamtkosten (CLI + Web)
 
 ## Architekturentscheidung (CLI-first)
 Die Anwendung ist **CLI-first** aufgebaut: Kernlogik und API-Anbindung liegen in wiederverwendbaren Python-Modulen (`calculator`, `pricing`, `api_clients`).
@@ -31,8 +31,14 @@ So bleibt die TCO-Berechnung an einer Stelle und Ergebnisse sind zwischen CLI un
 ## Projektstruktur
 ```text
 .
+├── .github/workflows/ci.yml
+├── .dockerignore
+├── Dockerfile
+├── Procfile
 ├── pyproject.toml
 ├── README.md
+├── render.yaml
+├── requirements.txt
 ├── src
 │   └── tco_app
 │       ├── __init__.py
@@ -44,7 +50,8 @@ So bleibt die TCO-Berechnung an einer Stelle und Ergebnisse sind zwischen CLI un
 │       ├── models.py
 │       ├── pricing.py
 │       ├── reporting.py
-│       └── web.py
+│       ├── web.py
+│       └── wsgi.py
 └── tests
     ├── test_global_acquisition.py
     ├── test_leasing.py
@@ -57,7 +64,7 @@ So bleibt die TCO-Berechnung an einer Stelle und Ergebnisse sind zwischen CLI un
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install -e '.[test]'
+python -m pip install '.[test]'
 ```
 
 Optionales Cache-Verzeichnis:
@@ -149,32 +156,23 @@ gh repo create phamann84/verbrenner-vs-elektro --public --source=. --remote=orig
 5. Deploy starten.
 6. Nach dem Deploy die Render-URL oeffnen (z.B. `https://verbrenner-vs-elektro.onrender.com`).
 
-## Eingaben (abgedeckt)
+## Eingaben (aktuelle Web-UI)
 ### Allgemein
-- `years`, `annual_km`
-- `Kaufen/Leasen`: `acquisition_mode` (`buy` oder `lease`)
-- `restwert` je Fahrzeug (prozentual oder absolut)
-- `other_fixed_costs_per_year`, `tire_costs_per_year`
-- optional Finanzierung: `financing_rate`, `financing_down_payment_pct`, `financing_term_years`
+- `Jahre`
+- `km/Jahr`
+- `Kaufen/Leasen` (global fuer beide Fahrzeuge)
+- `Manueller Strompreis (EUR/kWh)`
+- `Spritpreis manuell (EUR/l)`
 
 ### Elektro
-- Kaufpreis
-- Leasingrate/Monat und Sonderzahlung (werden bei global `lease` genutzt)
-- Verbrauch (kWh/100km)
-- Heimladeverluste
-- Public/HPC Preis
-- Wartung, Versicherung, Steuer
-- Interne feste Ladeverteilung: Home 70%, Public 20%, HPC 10%
+- Bei `Kaufen`: `Elektro Kaufpreis`, `Restwert (%)`
+- Bei `Leasen`: `Elektro Leasingrate/Monat`, `Elektro Sonderzahlung`
+- Immer: `Verbrauch (kWh/100km)`, `Wartung/Jahr`, `Versicherung/Jahr`, `Steuer/Jahr`
 
 ### Verbrenner
-- Kaufpreis
-- Leasingrate/Monat und Sonderzahlung (werden bei global `lease` genutzt)
-- Verbrauch (l/100km)
-- Wartung, Versicherung, Steuer
-
-### Preisquellen
-- Spritpreis: manuelle Eingabe `EUR/l`
-- aWATTar: Durchschnitt naechste 24h, optional letzte 7 Tage (Info)
+- Bei `Kaufen`: `Verbrenner Kaufpreis`, `Restwert (%)`
+- Bei `Leasen`: `Verbrenner Leasingrate/Monat`, `Verbrenner Sonderzahlung`
+- Immer: `Verbrauch (l/100km)`, `Wartung/Jahr`, `Versicherung/Jahr`, `Steuer/Jahr`
 
 ## Berechnungslogik
 ### Einheiten
@@ -188,16 +186,15 @@ gh repo create phamann84/verbrenner-vs-elektro --public --source=. --remote=orig
 - Elektro:
   - `kwh_jahr = km_jahr * (kWh/100km) / 100`
   - `kwh_effektiv = kwh_jahr * (1 + ladeverluste)`
-  - `gewichteter_preis = 0.7*home + 0.2*public + 0.1*hpc`
-  - `kosten = kwh_effektiv * gewichteter_preis`
+  - `kosten = kwh_effektiv * gewichteter_strompreis`
 
-### TCO
-`TCO = Anschaffung - Restwert + Energie + Wartung + Versicherung + Steuer + Sonstiges (+ Finanzierung falls gesetzt)`
+### Gesamtkosten
+`Gesamtkosten = Anschaffung - Restwert + Energie + Wartung + Versicherung + Steuer`
 
 Bei Leasing (`acquisition_mode=lease`) gilt:
 - Anschaffung = einmalige Sonderzahlung im Jahr 1
-- Finanzierung/Leasing = Monatsrate * 12 pro Jahr
-- Restwertansatz = 0 (Fahrzeug wird nicht als Eigentum bilanziert)
+- Leasingkosten = Monatsrate * 12 pro Jahr
+- Restwertansatz = 0 (kein Eigentum)
 
 ## Sensitivitaetsanalyse
 Automatisch enthalten:
@@ -213,6 +210,24 @@ Getestet werden:
 - Umrechnungen (EUR/MWh -> EUR/kWh)
 - Energiekostenformeln (Elektro/Verbrenner)
 - Leasingberechnung und globaler Kaufen/Leasen-Switch
+
+## CI
+- GitHub Actions Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
+- Trigger: Push auf `main` und Pull Requests
+- Fuehrt `python -m pytest` automatisch aus
+
+## Docker
+Build:
+```bash
+docker build -t ev-ice-tco .
+```
+
+Run:
+```bash
+docker run --rm -p 8080:8080 ev-ice-tco
+```
+
+Dann im Browser oeffnen: [http://127.0.0.1:8080](http://127.0.0.1:8080)
 
 ## Datenquellen
 - aWATTar Marketdata: https://api.awattar.at/v1/marketdata
