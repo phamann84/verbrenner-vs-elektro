@@ -1,0 +1,261 @@
+{
+  "general": {
+    "years": 5,
+    "annual_km": 18000.0,
+    "discount_rate": 0.0,
+    "other_fixed_costs_per_year": 0.0,
+    "tire_costs_per_year": 0.0,
+    "financing": null
+  },
+  "ev": {
+    "name": "EV",
+    "yearly_rows": [
+      {
+        "year": 1,
+        "energy_cost": 1270.296780923077,
+        "fixed_cost": 1250.0,
+        "financing_cost": 0.0,
+        "acquisition_cost": 45000,
+        "residual_credit": 0.0,
+        "total_cost": 47520.296780923076,
+        "discounted_total_cost": 47520.296780923076,
+        "cumulative_cost": 47520.296780923076,
+        "cumulative_discounted_cost": 47520.296780923076
+      },
+      {
+        "year": 2,
+        "energy_cost": 1270.296780923077,
+        "fixed_cost": 1250.0,
+        "financing_cost": 0.0,
+        "acquisition_cost": 0.0,
+        "residual_credit": 0.0,
+        "total_cost": 2520.2967809230768,
+        "discounted_total_cost": 2520.2967809230768,
+        "cumulative_cost": 50040.59356184615,
+        "cumulative_discounted_cost": 50040.59356184615
+      },
+      {
+        "year": 3,
+        "energy_cost": 1270.296780923077,
+        "fixed_cost": 1250.0,
+        "financing_cost": 0.0,
+        "acquisition_cost": 0.0,
+        "residual_credit": 0.0,
+        "total_cost": 2520.2967809230768,
+        "discounted_total_cost": 2520.2967809230768,
+        "cumulative_cost": 52560.89034276923,
+        "cumulative_discounted_cost": 52560.89034276923
+      },
+      {
+        "year": 4,
+        "energy_cost": 1270.296780923077,
+        "fixed_cost": 1250.0,
+        "financing_cost": 0.0,
+        "acquisition_cost": 0.0,
+        "residual_credit": 0.0,
+        "total_cost": 2520.2967809230768,
+        "discounted_total_cost": 2520.2967809230768,
+        "cumulative_cost": 55081.1871236923,
+        "cumulative_discounted_cost": 55081.1871236923
+      },
+      {
+        "year": 5,
+        "energy_cost": 1270.296780923077,
+        "fixed_cost": 1250.0,
+        "financing_cost": 0.0,
+        "acquisition_cost": 0.0,
+        "residual_credit": 20250.0,
+        "total_cost": -17729.703219076924,
+        "discounted_total_cost": -17729.703219076924,
+        "cumulative_cost": 37351.48390461538,
+        "cumulative_discounted_cost": 37351.48390461538
+      }
+    ],
+    "total_cost": 37351.48390461538,
+    "total_discounted_cost": 37351.48390461538,
+    "cost_per_km": 0.41501648782905975,
+    "components_total": {
+      "Energie": 6351.483904615385,
+      "Fixkosten": 6250.0,
+      "Finanzierung": 0.0,
+      "Anschaffung": 45000.0,
+      "Restwert": 20250.0,
+      "Restschuld": 0.0
+    }
+  },
+  "ice": {
+    "name": "ICE",
+    "yearly_rows": [
+      {
+        "year": 1,
+        "energy_cost": 2129.4,
+        "fixed_cost": 1770.0,
+        "financing_cost": 0.0,
+        "acquisition_cost": 35000,
+        "residual_credit": 0.0,
+        "total_cost": 38899.4,
+        "discounted_total_cost": 38899.4,
+        "cumulative_cost": 38899.4,
+        "cumulative_discounted_cost": 38899.4
+      },
+      {
+        "year": 2,
+        "energy_cost": 2129.4,
+        "fixed_cost": 1770.0,
+        "financing_cost": 0.0,
+        "acquisition_cost": 0.0,
+        "residual_credit": 0.0,
+        "total_cost": 3899.4,
+        "discounted_total_cost": 3899.4,
+        "cumulative_cost": 42798.8,
+        "cumulative_discounted_cost": 42798.8
+      },
+      {
+        "year": 3,
+        "energy_cost": 2129.4,
+        "fixed_cost": 1770.0,
+        "financing_cost": 0.0,
+        "acquisition_cost": 0.0,
+        "residual_credit": 0.0,
+        "total_cost": 3899.4,
+        "discounted_total_cost": 3899.4,
+        "cumulative_cost": 46698.200000000004,
+        "cumulative_discounted_cost": 46698.200000000004
+      },
+      {
+        "year": 4,
+        "energy_cost": 2129.4,
+        "fixed_cost": 1770.0,
+        "financing_cost": 0.0,
+        "acquisition_cost": 0.0,
+        "residual_credit": 0.0,
+        "total_cost": 3899.4,
+        "discounted_total_cost": 3899.4,
+        "cumulative_cost": 50597.600000000006,
+        "cumulative_discounted_cost": 50597.600000000006
+      },
+      {
+        "year": 5,
+        "energy_cost": 2129.4,
+        "fixed_cost": 1770.0,
+        "financing_cost": 0.0,
+        "acquisition_cost": 0.0,
+        "residual_credit": 14000.0,
+        "total_cost": -10100.6,
+        "discounted_total_cost": -10100.6,
+        "cumulative_cost": 40497.00000000001,
+        "cumulative_discounted_cost": 40497.00000000001
+      }
+    ],
+    "total_cost": 40497.00000000001,
+    "total_discounted_cost": 40497.00000000001,
+    "cost_per_km": 0.44996666666666674,
+    "components_total": {
+      "Energie": 10647.0,
+      "Fixkosten": 8850.0,
+      "Finanzierung": 0.0,
+      "Anschaffung": 35000.0,
+      "Restwert": 14000.0,
+      "Restschuld": 0.0
+    }
+  },
+  "prices": {
+    "fuel_price_eur_per_l": 1.82,
+    "home_price_eur_per_kwh": 0.22774923076923076,
+    "awattar_avg_next24h_eur_per_kwh": 0.10774923076923076,
+    "awattar_avg_last7d_eur_per_kwh": 0.09244119760479041,
+    "fuel_source": "Mock",
+    "electricity_source": "aWATTar-Boersenpreis + Modell (miss)",
+    "metadata": {
+      "fuel": {
+        "mode": "mock",
+        "reason": "missing_api_key"
+      },
+      "electricity": {
+        "mode": "awattar_model",
+        "next24h": {
+          "attempt": 1,
+          "points": 13,
+          "avg_eur_per_mwh": 107.7492
+        },
+        "last7d": {
+          "attempt": 1,
+          "points": 167,
+          "avg_eur_per_mwh": 92.4412
+        },
+        "markup_eur_per_kwh": 0.12,
+        "base_fee_component_eur_per_kwh": 0.0
+      }
+    }
+  },
+  "break_even": {
+    "reached": true,
+    "year": 4.587695171364425,
+    "km": 82578.51308455964
+  },
+  "recommendation": "Empfehlung: EV ist ueber 5 Jahre voraussichtlich guenstiger (Vorteil ca. 3,146 EUR). Break-even bei ca. Jahr 4.59 bzw. 82,579 km.",
+  "top_cost_drivers": [
+    [
+      "Anschaffung",
+      10000.0
+    ],
+    [
+      "Restwert",
+      -6250.0
+    ],
+    [
+      "Energie",
+      -4295.516095384615
+    ]
+  ],
+  "sensitivity": [
+    {
+      "scenario": "Energie -20%",
+      "ev_total": 36081.18712369232,
+      "ice_total": 38367.60000000002,
+      "delta_ev_minus_ice": -2286.4128763077024,
+      "break_even_year": 4.693398653835038,
+      "break_even_km": 84481.17576903068
+    },
+    {
+      "scenario": "Energie +20%",
+      "ev_total": 38621.78068553847,
+      "ice_total": 42626.399999999994,
+      "delta_ev_minus_ice": -4004.6193144615245,
+      "break_even_year": 4.486648070812378,
+      "break_even_km": 80759.6652746228
+    },
+    {
+      "scenario": "km/Jahr -20%",
+      "ev_total": 36081.18712369229,
+      "ice_total": 38367.59999999999,
+      "delta_ev_minus_ice": -2286.4128763077024,
+      "break_even_year": 4.693398653835038,
+      "break_even_km": 67584.94061522455
+    },
+    {
+      "scenario": "km/Jahr +20%",
+      "ev_total": 38621.78068553847,
+      "ice_total": 42626.399999999994,
+      "delta_ev_minus_ice": -4004.6193144615245,
+      "break_even_year": 4.486648070812378,
+      "break_even_km": 96911.59832954736
+    },
+    {
+      "scenario": "Restwert -10%",
+      "ev_total": 39376.48390461538,
+      "ice_total": 41897.00000000001,
+      "delta_ev_minus_ice": -2520.516095384628,
+      "break_even_year": 4.640137214351789,
+      "break_even_km": 83522.4698583322
+    },
+    {
+      "scenario": "Restwert +10%",
+      "ev_total": 35326.48390461538,
+      "ice_total": 39097.0,
+      "delta_ev_minus_ice": -3770.5160953846207,
+      "break_even_year": 4.543194942526259,
+      "break_even_km": 81777.50896547268
+    }
+  ]
+}
